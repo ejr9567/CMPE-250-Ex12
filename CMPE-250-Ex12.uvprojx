@@ -398,6 +398,11 @@
               <FileType>2</FileType>
               <FilePath>.\UART_Driver.s</FilePath>
             </File>
+            <File>
+              <FileName>RNG.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\RNG.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

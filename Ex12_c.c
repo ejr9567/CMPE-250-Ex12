@@ -13,11 +13,13 @@
 #include "Ex12_c.h"
 #include "Ex12_asm.h"
 #include "UART_Driver.h"
+#include "RNG.h"
 
 int main (void) {
 
   __asm("CPSID   I");  /* mask interrupts */
   Init_UART0_IRQ ();
+	Init_RNG();
   __asm("CPSIE   I");  /* unmask interrupts */
 
   for (;;) { /* do forever */
