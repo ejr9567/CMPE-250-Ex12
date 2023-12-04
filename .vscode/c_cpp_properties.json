@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:\\Users\\Eric\\AppData\\Local\\Arm\\Packs\\Keil\\Kinetis_KLxx_DFP\\1.15.1\\Device\\Include",
+                "C:\\Users\\Eric\\AppData\\Local\\Arm\\Packs\\ARM\\CMSIS\\5.9.0\\CMSIS\\Core\\Include",
+                "C:\\Keil_v5\\ARM\\ARMCLANG\\include"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE",
+                "__CC_ARM"
+            ],
+            "cStandard": "c99",
+            "compilerPath": "C:\\Keil_v5\\ARM\\ARMCLANG\\bin\\armclang.exe"
+        }
+    ],
+    "version": 4
+}

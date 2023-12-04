@@ -1,0 +1,101 @@
+Start signal: master pulls data line low, then clock line low
+this happens once when one device is becoming the master
+
+Stop signal: master pulls clock line high, then data line high
+
+
+
+--- ACCELEROMETER CONFIGURATION
+
+1 G = 9.8 m/s^2
+when "full scale" (configuration register?) set to 2 G
+each count of the 14-bit data register is 1/4096th G
+so 00000000 000000 = 0 m/s^2
+   10000000 000000 = -16,384 = -9.8 m/s^2
+   01111111 111111 = 16,383 = 9.8 m/s^2 * (16383/16384)
+
+to convert value to m/s^2, divide by 16384 and multiply by 9.8
+
+use Int32 so we don't lose very high values (> 8)
+
+(v/16384) * 9.8
+9.8 * v / 16384
+
+
+each data register represents a 14-bit two's complement number,
+where the lower 6 bits are in the other LSB register
+
+OUT_X_MSB OUT_X_LSB
+00000000  000000xx
+
+
+try with just MSB first, if it's not accurate enough, use LSB
+
+
+-- 0x0E "XYZ_DATA_CFG": 8-bit register
+bit 4 is enabling high pass filter, set to 0
+bits 1:0 are "full scale" configuration: range of Gs of the output
+set to 0 0 for 2 gs of range
+
+
+-- SINGLE BYTE READ TIMING
+* first transmission
+C: ST <-- start signal, happens when you set to master mode
+C: 7 bytes of device address <-- 001110
+C: W <-- write (0 for read, 1 for write)
+P: AK <-- "acknowledge", 0 if it can respond to the request, 1 if it doesnt know wtf is going on
+
+C: 8 bytes of register address <-- whatever register we want to read from
+P: AK <-- another acknowledge
+
+* second transmission
+C: SR <-- "repeated start signal", instead of sending stop signal after transmission, transmission continues
+C: 7 bytes of device address <-- 001110
+C: R <-- read (0 for read, 1 for write)
+P: AK <-- acknowledge
+P: 8 bytes of data!
+
+C: NAK <-- not acknowledge ("pluh its so joever" -controller)
+C: SP <-- stop signal, happens when you set to slave mode
+
+
+*I2C C1 register (8-bit control register)
+Bit 7 is enabled to enable I^2C
+Bit 6 is cleared to disable interrupts
+Bit 5 is left alone during init 
+Bit 4 is left alone during init
+Bit 3 is left alone during init
+Bit 2 is left cleared during init
+Bit 1 is cleared as we do not care about the interrupts from the DMA
+
+*I2C C2 register (8-bit control register)
+Bit 7 is cleared to disable general call addressing
+Bit 6 is cleared to utilize the 7-bit address scheme
+Bit 5 is cleared to use the normal-drive mode
+Bit 4 is cleared so the peripheral baud rate is synched to the master caller 
+Bit 3 is cleared as we dont want to act like a peripheral in the i^2c
+Bit 2-0 is reserved since we are using the 7-bit address scheme bit 2-0 are irrelevant and should not be touched
+
+
+frequency thing
+data hold time must be > 0.05 us
+--> SDA must be > 0.05; this is true for all modes
+time between da and clk low must be > 0.6 us
+--> SCL Start must be > 0.6; this is true for all modes!
+time between clk and da high must be > 0.6 us
+--> SCL Stop must be > 0.6; this is true for all modes
+(the i2c is slow lol)
+overall frequency must be 0 <= f <= 400 khz
+Bits 7-6 set 00 for mult of 1
+Bits 5-0 set 01 1000 for mult of 0x18
+ 
+bus speed is 24,000,000 Heap_Size
+baud rate = bus speed /  / (mul * SCL divider)
+= 24000 / (1 * SCL divider)
+
+-- IF IT DOESNT WORK
+try high drive strength (C2 - bit 5) lol
+try reading the timing diagram maybe (frequency divider register)
+check to make sure the resulting frequency is within the 0 to 400 kHz range (wtf is "scl divider" lol)
+for one byte read, try telling controller to send NACK before reading from the D register
+If reading is weird or always very high note that it might just be the first data reading in read byte instead of second
