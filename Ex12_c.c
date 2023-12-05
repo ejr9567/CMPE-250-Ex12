@@ -69,7 +69,7 @@ int main (void) {
       UInt32 endTimerTick = startTimerTick + (ROUND_SECONDS * PIT_TICKS_PER_SECOND);
       UInt32 success;
       while (1) {
-        float currVel = Accel_Get_Velocity_X_Y();
+        float currVel = Accel_Get_Velocity();
         if (currVel >= targetSpeed) {
           success = 1;
           break;

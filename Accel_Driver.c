@@ -182,19 +182,8 @@ void Accel_Calibrate(void) {
 }
 
 
-float Accel_Get_Velocity_X_Y(void) {
-    return sqrt((vel.x * vel.x) + (vel.y * vel.y));
-}
-
-UInt32 Accel_Get_Velocity(void) {
-    // lol
-
-    // accel_write_byte(&(Accel->XYZ_Data_CFG), 0b00010011);
-    // return accel_read_byte(&(Accel->XYZ_Data_CFG));
-
-    return 69;
-
-    // // return accel_read_byte((UInt8) (UInt32) (void*) &(Accel->Who_Am_I));
+float Accel_Get_Velocity(void) {
+    return sqrt((vel.x * vel.x) + (vel.y * vel.y) + (vel.z * vel.z));
 }
 
 float accel_interpret_data_sample(UInt8 high, UInt8 low);
