@@ -1,6 +1,8 @@
 #include "common.h"
 
 void Init_Accel(void);
-UInt32 Accel_Get_Velocity(void);
-UInt16 Accel_Get_Acceleration(void);
-float Accel_Get_Accel_X(void);
+void Accel_Calibrate(void);
+void Accel_Update_Velocity(void);
+void Accel_Reset_Velocity(void);
+float Accel_Get_Velocity_X_Y(void);
+void PutFloat(float);

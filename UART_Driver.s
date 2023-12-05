@@ -62,7 +62,7 @@ Q_END_CH    EQU   '<'
 
 ; Max number of characters that can be stored in
 ; UART driver transmit and receive buffers
-UART0_BUFFER_SIZE   EQU 80
+UART0_BUFFER_SIZE   EQU 255
 
 ;---------------------------------------------------------------
 ;NVIC_ICER
@@ -961,6 +961,8 @@ NewlineLen  EQU     (NewlinePast - Newline)
 ;****************************************************************
 ;Variables
             AREA    UART_Operations_Data,DATA,READWRITE
+
+            EXPORT  RxQRecord
 ;>>>>> begin variables here <<<<<
 PutNumUWorkBuffer
             SPACE   MAX_DECIMAL_STR_LEN
